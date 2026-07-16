@@ -1,0 +1,55 @@
+{
+    "Archery": [
+        "A person is practicing archery.",
+        "A person is aiming and shooting arrows with a bow.",
+        "The action shows someone using a bow and arrow."
+    ],
+
+    "Basketball": [
+        "A person is playing basketball.",
+        "A person is dribbling or shooting a basketball.",
+        "The action shows someone participating in a basketball game."
+    ],
+
+    "Biking": [
+        "A person is riding a bicycle.",
+        "A person is moving forward while pedaling a bike.",
+        "The action shows someone cycling."
+    ],
+
+    "Bowling": [
+        "A person is bowling.",
+        "A person rolls a bowling ball toward the pins.",
+        "The action shows someone playing bowling."
+    ],
+
+    "Drumming": [
+        "A person is playing drums.",
+        "A person strikes drums using drumsticks.",
+        "The action shows someone performing on a drum set."
+    ],
+
+    "JavelinThrow": [
+        "A person is throwing a javelin.",
+        "A person runs and throws a javelin during an athletic event.",
+        "The action shows someone performing a javelin throw."
+    ],
+
+    "PlayingGuitar": [
+        "A person is playing a guitar.",
+        "A person holds a guitar and strums the strings.",
+        "The action shows someone performing music with a guitar."
+    ],
+
+    "RopeClimbing": [
+        "A person is climbing a rope.",
+        "A person pulls themselves upward using a rope.",
+        "The action shows someone performing rope climbing."
+    ],
+
+    "Typing": [
+        "A person is typing on a keyboard.",
+        "A person presses keys while using a computer.",
+        "The action shows someone entering text using a keyboard."
+    ]
+}

@@ -1,0 +1,28 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large dataset folders
+data/downloads/
+data/raw_videos/
+data/splits/
+data/frames/
+
+# Model files
+models/*.pt
+models/*.pth
+models/*.pkl
+models/*.joblib
+
+# Windows and macOS files
+Thumbs.db
+.DS_Store
