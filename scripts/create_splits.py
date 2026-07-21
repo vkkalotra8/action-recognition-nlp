@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import shutil
 
 import pandas as pd
@@ -13,6 +14,7 @@ CLASSES_FILE = METADATA_DIR / "classes.txt"
 
 RANDOM_STATE = 42
 VIDEO_EXTENSIONS = {".avi", ".mp4", ".mov", ".mkv"}
+GROUP_PATTERN = re.compile(r"_g(\d+)_")
 
 
 def load_classes() -> list[str]:
@@ -52,11 +54,19 @@ def collect_videos(classes: list[str]) -> pd.DataFrame:
             raise ValueError(f"No videos found for class: {class_name}")
 
         for video_path in videos:
+            match = GROUP_PATTERN.search(video_path.stem)
+            if match is None:
+                raise ValueError(
+                    "Could not determine the UCF101 recording group for "
+                    f"{video_path.name}"
+                )
+
             records.append(
                 {
                     "video_path": str(video_path),
                     "filename": video_path.name,
                     "class_name": class_name,
+                    "group_id": match.group(1),
                 }
             )
 
@@ -65,36 +75,58 @@ def collect_videos(classes: list[str]) -> pd.DataFrame:
 
 def assign_splits(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
-    Create a 70/15/15 stratified split.
+    Create an approximately 70/15/15 split at recording-group level.
 
-    First: 70% train, 30% temporary.
-    Second: divide temporary data equally into validation and test.
+    UCF101 clips that share a class and group ID (for example,
+    v_Archery_g01_c01 and v_Archery_g01_c02) remain in one split.
+    This prevents clips from the same recording group leaking into
+    validation or test data.
     """
-    train_df, temporary_df = train_test_split(
-        dataframe,
-        test_size=0.30,
-        random_state=RANDOM_STATE,
-        shuffle=True,
-        stratify=dataframe["class_name"],
-    )
+    split_dataframes: list[pd.DataFrame] = []
 
-    val_df, test_df = train_test_split(
-        temporary_df,
-        test_size=0.50,
-        random_state=RANDOM_STATE,
-        shuffle=True,
-        stratify=temporary_df["class_name"],
-    )
+    for class_index, (class_name, class_df) in enumerate(
+        dataframe.groupby("class_name", sort=True)
+    ):
+        group_ids = sorted(class_df["group_id"].unique())
 
-    train_df = train_df.copy()
-    val_df = val_df.copy()
-    test_df = test_df.copy()
+        if len(group_ids) < 7:
+            raise ValueError(
+                f"{class_name} has only {len(group_ids)} recording groups; "
+                "at least 7 are required for a train/validation/test split."
+            )
 
-    train_df["split"] = "train"
-    val_df["split"] = "val"
-    test_df["split"] = "test"
+        train_groups, temporary_groups = train_test_split(
+            group_ids,
+            test_size=0.30,
+            random_state=RANDOM_STATE + class_index,
+            shuffle=True,
+        )
+        val_groups, test_groups = train_test_split(
+            temporary_groups,
+            test_size=0.50,
+            random_state=RANDOM_STATE + class_index,
+            shuffle=True,
+        )
 
-    return pd.concat([train_df, val_df, test_df], ignore_index=True)
+        split_by_group = {
+            group_id: "train" for group_id in train_groups
+        }
+        split_by_group.update({group_id: "val" for group_id in val_groups})
+        split_by_group.update({group_id: "test" for group_id in test_groups})
+
+        class_split_df = class_df.copy()
+        class_split_df["split"] = class_split_df["group_id"].map(
+            split_by_group
+        )
+        split_dataframes.append(class_split_df)
+
+    return pd.concat(split_dataframes, ignore_index=True)
+
+
+def clear_derived_split_data() -> None:
+    """Remove old copied split videos before recreating them."""
+    if SPLIT_DIR.exists():
+        shutil.rmtree(SPLIT_DIR)
 
 
 def copy_split_videos(split_dataframe: pd.DataFrame) -> None:
@@ -133,6 +165,7 @@ def main() -> None:
     dataframe = collect_videos(classes)
     split_dataframe = assign_splits(dataframe)
 
+    clear_derived_split_data()
     METADATA_DIR.mkdir(parents=True, exist_ok=True)
     split_dataframe.to_csv(
         METADATA_DIR / "video_splits.csv",

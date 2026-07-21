@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import cv2
 from tqdm import tqdm
@@ -223,6 +224,11 @@ def process_split(split_name: str):
 # Main
 # ==========================
 def main():
+
+    # Frames are derived from the current split assignment.  Clear any
+    # previous output so no video folder remains in an outdated split.
+    if FRAME_OUTPUT_DIR.exists():
+        shutil.rmtree(FRAME_OUTPUT_DIR)
 
     FRAME_OUTPUT_DIR.mkdir(
         parents=True,
