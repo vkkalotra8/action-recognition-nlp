@@ -1,28 +1,10 @@
 # Semantic Prompt-Guided Human Action Recognition
 
-## Project Overview
-
-This project develops a human action recognition system using both video data and natural-language action descriptions.
-
-The first version uses a selected subset of the UCF101 dataset. Video frames are extracted and later used with visual models such as CNNs. Natural-language action descriptions will later be encoded using Sentence-BERT or BERT.
-
-The final system will predict:
-
-- Action class
-- Confidence score
-- Natural-language explanation
+This project combines video-based human action recognition with natural-language descriptions of actions. The initial system predicts an action from video frames; later stages add text embeddings, vision-language fusion, and natural-language explanations.
 
 ## Dataset
 
-Dataset used:
-
-- UCF101
-
-Number of selected classes:
-
-- 9 classes
-
-## Selected Action Classes
+The first version uses a 9-class subset of UCF101:
 
 1. Archery
 2. Basketball
@@ -34,42 +16,65 @@ Number of selected classes:
 8. RopeClimbing
 9. Typing
 
-## Week 1 Objectives
+Each video is represented by 16 evenly spaced, 224 x 224 JPEG frames.
 
-Week 1 focuses on:
+## Split policy
 
-- Selecting a subset of UCF101
-- Organizing the project folders
-- Checking all videos
-- Creating train, validation, and test splits
-- Extracting video frames
-- Verifying extracted frames
-- Preparing natural-language action descriptions
+The data is split approximately 70% / 15% / 15% into training, validation, and test sets. UCF101 clips with the same class and recording group (for example, `v_Archery_g01_c01` and `v_Archery_g01_c02`) are always assigned to the same partition. This prevents recording-group leakage and makes evaluation reliable.
 
-## Dataset Split
+## Setup
 
-The dataset is divided at the video level into:
+Prerequisites:
 
-- Training: 70%
-- Validation: 15%
-- Testing: 15%
+- Windows and Python 3.10 or later
+- Git
 
-Splitting is performed before frame extraction so frames from the same video do not appear in multiple data splits.
+Create and activate a virtual environment:
 
-## Frame Extraction
+```powershell
+py -3.14 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-For each video:
+The requirements use the official CPU-only PyTorch wheel index and PyTorch 2.11, which supports Python 3.14 experimentally. This is the appropriate default for this machine because no NVIDIA CUDA tooling was detected.
 
-- 16 evenly spaced frames are extracted
-- Each frame is resized to 224 x 224 pixels
-- Frames are saved as JPG files
+Confirm the deep-learning environment:
 
-Example:
+```powershell
+python -c "import torch, torchvision; print(torch.__version__); print(torchvision.__version__); print('CUDA available:', torch.cuda.is_available())"
+```
+
+## Reproducing the Week 1 dataset preparation
+
+Place the selected UCF101 videos in `data/raw_videos/<class_name>/`. The required class names are listed in `metadata/classes.txt`.
+
+Then run the following commands from the repository root:
+
+```powershell
+python scripts/check_dataset.py
+python scripts/create_splits.py
+python scripts/extract_frames.py
+python scripts/verify_frames.py
+python scripts/check_descriptions.py
+python scripts/check_split_leakage.py
+```
+
+`create_splits.py` and `extract_frames.py` recreate their derived output directories. Do not place manual files in `data/splits/` or `data/frames/`.
+
+## Project layout
 
 ```text
-data/frames/train/Biking/v_Biking_g01_c01/
-├── frame_000.jpg
-├── frame_001.jpg
-├── frame_002.jpg
-├── ...
-└── frame_015.jpg
+app/        Streamlit application (Week 6)
+data/       Raw videos, generated splits, and extracted frames
+metadata/   Class list, action descriptions, and split manifest
+models/     Saved models
+notebooks/  Exploratory notebooks
+reports/    Results and documentation
+scripts/    Data preparation and validation scripts
+```
+
+## Current status
+
+Week 1 is complete: the dataset, group-safe splits, frame extraction, and action descriptions have been verified. Week 2 will implement a video-only PyTorch baseline using pretrained visual features.

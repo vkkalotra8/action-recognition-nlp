@@ -1,5 +1,6 @@
-# Virtual environment
+# Virtual environments
 .venv/
+.venv_py314/
 
 # Python cache
 __pycache__/
@@ -17,11 +18,19 @@ data/raw_videos/
 data/splits/
 data/frames/
 
+# Generated CNN feature files
+data/features/train/
+data/features/val/
+data/features/test/
+
 # Model files
 models/*.pt
 models/*.pth
 models/*.pkl
 models/*.joblib
+
+# Generated evaluation outputs
+results/
 
 # Windows and macOS files
 Thumbs.db
