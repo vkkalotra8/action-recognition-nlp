@@ -1,0 +1,33 @@
+TEXT EMBEDDING SEMANTIC SIMILARITY REPORT
+======================================================================
+
+Model: all-MiniLM-L6-v2
+Number of classes: 9
+Similarity matrix shape: (9, 9)
+Similarity metric: cosine similarity
+
+MOST SIMILAR CLASS PAIRS
+----------------------------------------------------------------------
+ 1. Drumming        <-> PlayingGuitar   : 0.5231
+ 2. Basketball      <-> Bowling         : 0.4992
+ 3. Archery         <-> JavelinThrow    : 0.4892
+ 4. Archery         <-> Bowling         : 0.4820
+ 5. Bowling         <-> JavelinThrow    : 0.4382
+ 6. Basketball      <-> JavelinThrow    : 0.4222
+ 7. PlayingGuitar   <-> RopeClimbing    : 0.4090
+ 8. Archery         <-> Basketball      : 0.4079
+ 9. Archery         <-> RopeClimbing    : 0.3836
+10. Bowling         <-> PlayingGuitar   : 0.3737
+
+LEAST SIMILAR CLASS PAIRS
+----------------------------------------------------------------------
+ 1. JavelinThrow    <-> Typing          : 0.1454
+ 2. Bowling         <-> Typing          : 0.1727
+ 3. Archery         <-> Typing          : 0.2103
+ 4. Drumming        <-> JavelinThrow    : 0.2105
+ 5. Bowling         <-> Drumming        : 0.2195
+ 6. Basketball      <-> Biking          : 0.2394
+ 7. Drumming        <-> RopeClimbing    : 0.2422
+ 8. Drumming        <-> Typing          : 0.2446
+ 9. Biking          <-> Typing          : 0.2450
+10. Biking          <-> JavelinThrow    : 0.2506

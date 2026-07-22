@@ -1,0 +1,27 @@
+{
+    "model_name": "all-MiniLM-L6-v2",
+    "number_of_classes": 9,
+    "number_of_descriptions": 45,
+    "descriptions_per_class": {
+        "Archery": 5,
+        "Basketball": 5,
+        "Biking": 5,
+        "Bowling": 5,
+        "Drumming": 5,
+        "JavelinThrow": 5,
+        "PlayingGuitar": 5,
+        "RopeClimbing": 5,
+        "Typing": 5
+    },
+    "embedding_dimension": 384,
+    "description_embeddings_shape": [
+        45,
+        384
+    ],
+    "class_embeddings_shape": [
+        9,
+        384
+    ],
+    "embedding_dtype": "float32",
+    "normalized_embeddings": true
+}

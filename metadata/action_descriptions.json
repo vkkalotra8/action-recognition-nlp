@@ -2,54 +2,72 @@
     "Archery": [
         "A person is practicing archery.",
         "A person is aiming and shooting arrows with a bow.",
-        "The action shows someone using a bow and arrow."
+        "The action shows someone using a bow and arrow.",
+        "An archer carefully aims before releasing an arrow.",
+        "A person is participating in an archery activity."
     ],
 
     "Basketball": [
         "A person is playing basketball.",
         "A person is dribbling or shooting a basketball.",
-        "The action shows someone participating in a basketball game."
+        "The action shows someone participating in a basketball game.",
+        "A basketball player is handling the ball on the court.",
+        "Someone is passing, dribbling, or shooting during a basketball match."
     ],
 
     "Biking": [
         "A person is riding a bicycle.",
         "A person is moving forward while pedaling a bike.",
-        "The action shows someone cycling."
+        "The action shows someone cycling.",
+        "A cyclist is pedaling a bicycle along a path.",
+        "Someone is traveling by riding a bike."
     ],
 
     "Bowling": [
         "A person is bowling.",
         "A person rolls a bowling ball toward the pins.",
-        "The action shows someone playing bowling."
+        "The action shows someone playing bowling.",
+        "A bowler throws a bowling ball down the lane.",
+        "Someone is aiming to knock down bowling pins."
     ],
 
     "Drumming": [
         "A person is playing drums.",
         "A person strikes drums using drumsticks.",
-        "The action shows someone performing on a drum set."
+        "The action shows someone performing on a drum set.",
+        "A drummer is creating rhythm by hitting the drums.",
+        "Someone is performing music using a drum kit."
     ],
 
     "JavelinThrow": [
         "A person is throwing a javelin.",
         "A person runs and throws a javelin during an athletic event.",
-        "The action shows someone performing a javelin throw."
+        "The action shows someone performing a javelin throw.",
+        "An athlete is preparing and launching a javelin.",
+        "Someone is competing in a javelin throwing event."
     ],
 
     "PlayingGuitar": [
         "A person is playing a guitar.",
         "A person holds a guitar and strums the strings.",
-        "The action shows someone performing music with a guitar."
+        "The action shows someone performing music with a guitar.",
+        "A guitarist is playing musical notes on a guitar.",
+        "Someone is performing while holding and playing a guitar."
     ],
 
     "RopeClimbing": [
         "A person is climbing a rope.",
         "A person pulls themselves upward using a rope.",
-        "The action shows someone performing rope climbing."
+        "The action shows someone performing rope climbing.",
+        "Someone is ascending a rope using their hands and legs.",
+        "A person is climbing vertically with the help of a rope."
     ],
 
     "Typing": [
         "A person is typing on a keyboard.",
         "A person presses keys while using a computer.",
-        "The action shows someone entering text using a keyboard."
+        "The action shows someone entering text using a keyboard.",
+        "Someone is writing by typing on a computer keyboard.",
+        "A person is using a keyboard to input information."
     ]
 }
