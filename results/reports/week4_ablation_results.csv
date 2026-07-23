@@ -1,0 +1,5 @@
+experiment,feature_type,feature_dimension,contains_label_leakage,valid_unseen_video_inference,test_accuracy,macro_precision,macro_recall,macro_f1,weighted_f1,interpretation
+Video-only baseline,Visual,512,False,True,0.9340,0.9289,0.9284,0.9277,0.9341,Valid visual-only reference model.
+Text-only oracle,Text,384,True,False,1.0000,1.0000,1.0000,1.0000,1.0000,Oracle result because the true class selects the text embedding.
+Oracle concatenation,Visual + true-label text,896,True,False,1.0000,1.0000,1.0000,1.0000,1.0000,Upper-bound experiment with target leakage.
+Leakage-safe semantic projection,Visual projected to text space,384,False,True,0.8782,0.8709,0.8740,0.8639,0.8734,Valid semantic prediction from visual features only.

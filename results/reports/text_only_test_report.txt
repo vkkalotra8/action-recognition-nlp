@@ -1,0 +1,29 @@
+TEXT-ONLY ORACLE TEST REPORT
+======================================================================
+
+WARNING:
+This experiment constructs each test feature using the sample's ground-truth class text embedding. It therefore contains target leakage and is not a valid unseen-video evaluation.
+
+Test feature shape: (197, 384)
+Accuracy: 1.0000
+Macro precision: 1.0000
+Macro recall: 1.0000
+Macro F1-score: 1.0000
+Weighted F1-score: 1.0000
+Misclassifications: 0
+
+               precision    recall  f1-score   support
+
+      Archery     1.0000    1.0000    1.0000        25
+   Basketball     1.0000    1.0000    1.0000        20
+       Biking     1.0000    1.0000    1.0000        20
+      Bowling     1.0000    1.0000    1.0000        23
+     Drumming     1.0000    1.0000    1.0000        28
+ JavelinThrow     1.0000    1.0000    1.0000        19
+PlayingGuitar     1.0000    1.0000    1.0000        25
+ RopeClimbing     1.0000    1.0000    1.0000        18
+       Typing     1.0000    1.0000    1.0000        19
+
+     accuracy                         1.0000       197
+    macro avg     1.0000    1.0000    1.0000       197
+ weighted avg     1.0000    1.0000    1.0000       197

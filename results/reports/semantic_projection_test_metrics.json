@@ -1,0 +1,14 @@
+{
+    "experiment": "leakage_safe_semantic_projection",
+    "contains_label_leakage": false,
+    "test_samples": 197,
+    "visual_feature_dimension": 512,
+    "semantic_dimension": 384,
+    "number_of_classes": 9,
+    "accuracy": 0.8781725888324873,
+    "macro_precision": 0.8708973795930318,
+    "macro_recall": 0.8739524737770351,
+    "macro_f1": 0.8638599415542126,
+    "weighted_f1": 0.8734093715749928,
+    "misclassification_count": 24
+}

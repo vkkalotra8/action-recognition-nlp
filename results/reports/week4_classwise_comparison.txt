@@ -1,0 +1,36 @@
+WEEK 4 CLASS-WISE F1 COMPARISON
+==============================================================================
+
+Class                 Video F1   Projection F1   Difference     Outcome
+------------------------------------------------------------------------------
+Archery                 0.9167          0.8000      -0.1167       Worse
+Basketball              0.7907          0.6250      -0.1657       Worse
+Biking                  0.9756          0.9302      -0.0454       Worse
+Bowling                 1.0000          1.0000      +0.0000   Unchanged
+Drumming                1.0000          0.9818      -0.0182       Worse
+JavelinThrow            0.7778          0.6829      -0.0949       Worse
+PlayingGuitar           1.0000          1.0000      +0.0000   Unchanged
+RopeClimbing            0.8889          0.8500      -0.0389       Worse
+Typing                  1.0000          0.9048      -0.0952       Worse
+
+SUMMARY
+------------------------------------------------------------------------------
+Improved classes : 0
+Worse classes    : 7
+Unchanged classes: 2
+
+Best class-wise changes:
+  Bowling         +0.0000
+  PlayingGuitar   +0.0000
+  Drumming        -0.0182
+
+Largest decreases:
+  Basketball      -0.1657
+  Archery         -0.1167
+  Typing          -0.0952
+
+INTERPRETATION
+------------------------------------------------------------------------------
+No action class improved under the leakage-safe semantic projection.
+Bowling and PlayingGuitar were unchanged, while the remaining classes showed lower F1-scores than the video-only baseline.
+The largest decreases occurred for Basketball, Archery, and Typing.

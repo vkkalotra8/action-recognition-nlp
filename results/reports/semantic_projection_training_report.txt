@@ -1,0 +1,17 @@
+LEAKAGE-SAFE VISUAL-TO-SEMANTIC PROJECTION TRAINING
+======================================================================
+
+Device: cpu
+Training samples: 867
+Validation samples: 197
+Input dimension: 512
+Output dimension: 384
+Checkpoint selection: highest validation accuracy, then lowest validation loss
+Best epoch: 11
+Best validation accuracy: 0.9340
+Best validation loss: 0.307887
+Reloaded-model validation accuracy: 0.9340
+Reloaded-model validation loss: 0.307887
+
+This model receives only visual features during inference.
+Ground-truth text embeddings are used as training targets, not as input features.

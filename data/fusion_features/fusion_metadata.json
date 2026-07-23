@@ -1,0 +1,40 @@
+{
+    "fusion_type": "oracle_true_label_concatenation",
+    "warning": "This dataset uses the ground-truth class embedding for each sample and therefore contains label leakage. It must only be used as an oracle experiment.",
+    "class_names": [
+        "Archery",
+        "Basketball",
+        "Biking",
+        "Bowling",
+        "Drumming",
+        "JavelinThrow",
+        "PlayingGuitar",
+        "RopeClimbing",
+        "Typing"
+    ],
+    "number_of_classes": 9,
+    "text_embedding_model": "all-MiniLM-L6-v2",
+    "splits": {
+        "train": {
+            "number_of_samples": 867,
+            "visual_dimension": 512,
+            "text_dimension": 384,
+            "fused_dimension": 896,
+            "feature_dtype": "float32"
+        },
+        "val": {
+            "number_of_samples": 197,
+            "visual_dimension": 512,
+            "text_dimension": 384,
+            "fused_dimension": 896,
+            "feature_dtype": "float32"
+        },
+        "test": {
+            "number_of_samples": 197,
+            "visual_dimension": 512,
+            "text_dimension": 384,
+            "fused_dimension": 896,
+            "feature_dtype": "float32"
+        }
+    }
+}

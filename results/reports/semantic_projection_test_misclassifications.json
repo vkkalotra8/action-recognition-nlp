@@ -1,0 +1,146 @@
+[
+    {
+        "sample_index": 7,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6224703788757324
+    },
+    {
+        "sample_index": 8,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6694633960723877
+    },
+    {
+        "sample_index": 9,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6316282749176025
+    },
+    {
+        "sample_index": 10,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6355253458023071
+    },
+    {
+        "sample_index": 11,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6734793186187744
+    },
+    {
+        "sample_index": 12,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6375974416732788
+    },
+    {
+        "sample_index": 13,
+        "true_class": "Archery",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.6186610460281372
+    },
+    {
+        "sample_index": 25,
+        "true_class": "Basketball",
+        "predicted_class": "Typing",
+        "predicted_similarity": 0.34089791774749756
+    },
+    {
+        "sample_index": 26,
+        "true_class": "Basketball",
+        "predicted_class": "Typing",
+        "predicted_similarity": 0.5253399610519409
+    },
+    {
+        "sample_index": 27,
+        "true_class": "Basketball",
+        "predicted_class": "Biking",
+        "predicted_similarity": 0.49258601665496826
+    },
+    {
+        "sample_index": 28,
+        "true_class": "Basketball",
+        "predicted_class": "JavelinThrow",
+        "predicted_similarity": 0.4700160622596741
+    },
+    {
+        "sample_index": 29,
+        "true_class": "Basketball",
+        "predicted_class": "Typing",
+        "predicted_similarity": 0.3510282039642334
+    },
+    {
+        "sample_index": 34,
+        "true_class": "Basketball",
+        "predicted_class": "Archery",
+        "predicted_similarity": 0.5899579524993896
+    },
+    {
+        "sample_index": 35,
+        "true_class": "Basketball",
+        "predicted_class": "RopeClimbing",
+        "predicted_similarity": 0.4880754351615906
+    },
+    {
+        "sample_index": 36,
+        "true_class": "Basketball",
+        "predicted_class": "Biking",
+        "predicted_similarity": 0.5841917991638184
+    },
+    {
+        "sample_index": 37,
+        "true_class": "Basketball",
+        "predicted_class": "RopeClimbing",
+        "predicted_similarity": 0.5239863395690918
+    },
+    {
+        "sample_index": 38,
+        "true_class": "Basketball",
+        "predicted_class": "Archery",
+        "predicted_similarity": 0.6250358819961548
+    },
+    {
+        "sample_index": 109,
+        "true_class": "Drumming",
+        "predicted_class": "Typing",
+        "predicted_similarity": 0.4739380180835724
+    },
+    {
+        "sample_index": 120,
+        "true_class": "JavelinThrow",
+        "predicted_class": "RopeClimbing",
+        "predicted_similarity": 0.591480016708374
+    },
+    {
+        "sample_index": 121,
+        "true_class": "JavelinThrow",
+        "predicted_class": "RopeClimbing",
+        "predicted_similarity": 0.6477179527282715
+    },
+    {
+        "sample_index": 122,
+        "true_class": "JavelinThrow",
+        "predicted_class": "Basketball",
+        "predicted_similarity": 0.557013750076294
+    },
+    {
+        "sample_index": 123,
+        "true_class": "JavelinThrow",
+        "predicted_class": "Basketball",
+        "predicted_similarity": 0.5761371850967407
+    },
+    {
+        "sample_index": 124,
+        "true_class": "JavelinThrow",
+        "predicted_class": "RopeClimbing",
+        "predicted_similarity": 0.5913600921630859
+    },
+    {
+        "sample_index": 177,
+        "true_class": "RopeClimbing",
+        "predicted_class": "Biking",
+        "predicted_similarity": 0.6326131820678711
+    }
+]

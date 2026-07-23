@@ -1,0 +1,23 @@
+WEEK 4 VISION-LANGUAGE ABLATION REPORT
+================================================================================
+
+Experiment                                Dim   Leakage    Accuracy    Macro F1
+------------------------------------------------------------------------------
+Video-only baseline                       512        No      0.9340      0.9277
+Text-only oracle                          384       Yes      1.0000      1.0000
+Oracle concatenation                      896       Yes      1.0000      1.0000
+Leakage-safe semantic projection          384        No      0.8782      0.8639
+
+VALID COMPARISON
+------------------------------------------------------------------------------
+Video-only baseline test accuracy: 0.9340
+Leakage-safe projection test accuracy: 0.8782
+Accuracy difference (projection minus video-only): -0.0558
+Macro F1 difference (projection minus video-only): -0.0639
+
+INTERPRETATION
+------------------------------------------------------------------------------
+The text-only and concatenation experiments reached perfect scores because they used the ground-truth class embedding and therefore contain label leakage.
+The leakage-safe semantic projection is a valid unseen-video model because it receives only visual features during inference.
+The semantic projection performed below the video-only baseline, showing that the simple linear mapping lost some discriminative visual information while aligning the representation with the text-embedding space.
+The oracle scores must not be presented as real performance improvements.

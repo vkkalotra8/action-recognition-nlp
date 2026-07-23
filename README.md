@@ -985,3 +985,310 @@ Text feature dimension:   384
 ```
 
 These visual and text features will be combined during Week 4 to develop the vision-language fusion model.
+
+
+
+---
+
+# Week 4: Vision-Language Fusion
+
+## Objective
+
+Week 4 explores how semantic language information can be combined with visual features for human action recognition.
+
+The primary goals are to:
+
+- Combine CNN visual features with Sentence-BERT text embeddings.
+- Explore simple multimodal fusion techniques.
+- Demonstrate why naïve text fusion introduces label leakage.
+- Develop a leakage-safe visual-to-semantic projection model.
+- Compare all approaches using a comprehensive ablation study.
+
+This week bridges computer vision and natural language processing while emphasizing proper experimental design.
+
+---
+
+## Week 4 Workflow
+
+```text
+                 ORACLE EXPERIMENTS (Label Leakage)
+
+Visual Feature (512)
+        │
+        ├─────────────┐
+        │             │
+        ▼             ▼
+Ground-truth     Sentence-BERT
+Class Label      Text Embedding (384)
+        │             │
+        └──────┬──────┘
+               ▼
+     Concatenated Feature (896)
+               │
+               ▼
+ Logistic Regression Classifier
+
+
+         LEAKAGE-SAFE EXPERIMENT
+
+Video
+   │
+   ▼
+ResNet18
+   │
+   ▼
+Visual Feature (512)
+   │
+   ▼
+Projection Network
+   │
+   ▼
+Predicted Semantic Embedding (384)
+   │
+   ▼
+Cosine Similarity
+   │
+   ▼
+Class Text Embeddings
+   │
+   ▼
+Predicted Action
+```
+
+---
+
+# Oracle Fusion Experiments
+
+Two oracle experiments were implemented to understand the effect of adding semantic information.
+
+### Text-only Oracle Baseline
+
+The classifier receives only the Sentence-BERT class embedding.
+
+Pipeline:
+
+```text
+Ground-truth Label
+      │
+Sentence-BERT
+      │
+384-d embedding
+      │
+Logistic Regression
+```
+
+Since the correct class embedding is directly provided, this experiment contains complete label leakage.
+
+---
+
+### Oracle Concatenation
+
+Visual features and the ground-truth text embedding are concatenated.
+
+```text
+512-d Visual Feature
+          +
+384-d Text Embedding
+          │
+          ▼
+896-d Fusion Feature
+          │
+          ▼
+Logistic Regression
+```
+
+This experiment also contains label leakage because the true class embedding is supplied during inference.
+
+---
+
+# Leakage-Safe Semantic Projection
+
+To remove label leakage, a projection network was trained.
+
+Instead of using the true class embedding during inference, the network predicts the semantic embedding directly from visual features.
+
+Pipeline:
+
+```text
+Video
+   │
+ResNet18
+   │
+512-d Visual Feature
+   │
+Projection Network
+   │
+384-d Predicted Semantic Embedding
+   │
+Cosine Similarity
+   │
+Sentence-BERT Class Embeddings
+   │
+Predicted Action
+```
+
+During inference the model receives only visual information.
+
+No ground-truth labels or text embeddings are provided.
+
+---
+
+# Experimental Results
+
+| Model | Feature Dimension | Label Leakage | Test Accuracy | Macro F1 |
+|------|------------------:|:-------------:|-------------:|----------:|
+| Video-only Baseline | 512 | No | **0.9340** | **0.9277** |
+| Text-only Oracle | 384 | Yes | **1.0000** | **1.0000** |
+| Oracle Concatenation | 896 | Yes | **1.0000** | **1.0000** |
+| Leakage-safe Semantic Projection | 384 | No | **0.8782** | **0.8639** |
+
+---
+
+# Ablation Study
+
+The oracle experiments achieved perfect performance because they used the correct class embedding during inference.
+
+These results should **not** be interpreted as genuine improvements.
+
+The leakage-safe semantic projection represents the valid deployment scenario because it predicts semantic information from visual features alone.
+
+Although the projection model did not outperform the original visual baseline, it successfully demonstrated semantic alignment without introducing label leakage.
+
+---
+
+# Class-wise Analysis
+
+Comparison between the Video-only Baseline and the Leakage-safe Semantic Projection:
+
+| Class | Result |
+|------|--------|
+| Bowling | Unchanged |
+| PlayingGuitar | Unchanged |
+| Archery | Lower F1 |
+| Basketball | Lower F1 |
+| Biking | Lower F1 |
+| Drumming | Lower F1 |
+| JavelinThrow | Lower F1 |
+| RopeClimbing | Lower F1 |
+| Typing | Lower F1 |
+
+Summary:
+
+- Improved classes: **0**
+- Unchanged classes: **2**
+- Lower-performing classes: **7**
+
+The largest performance decreases were observed for:
+
+- Basketball
+- Archery
+- Typing
+
+---
+
+# Semantic Prediction Pipeline
+
+A complete inference pipeline was implemented.
+
+The system accepts either:
+
+- a raw video file (`.avi`, `.mp4`, `.mov`, `.mkv`)
+- or an extracted frame directory.
+
+Prediction workflow:
+
+```text
+Input Video
+      │
+Frame Sampling
+      │
+ResNet18
+      │
+Visual Feature
+      │
+Projection Network
+      │
+Semantic Embedding
+      │
+Cosine Similarity
+      │
+Top-K Predictions
+```
+
+The prediction script outputs:
+
+- Predicted action
+- Top-K predicted classes
+- Cosine similarity scores
+
+No ground-truth labels are used during inference.
+
+---
+
+# Scripts Added
+
+```text
+scripts/
+│
+├── build_fusion_dataset.py
+├── validate_fusion_dataset.py
+├── train_text_baseline.py
+├── evaluate_text_baseline.py
+├── train_fusion_classifier.py
+├── evaluate_fusion_classifier.py
+├── train_semantic_projection.py
+├── evaluate_semantic_projection.py
+├── predict_video_semantic.py
+├── compare_models.py
+└── analyze_classwise_results.py
+```
+
+---
+
+# Generated Outputs
+
+```text
+data/
+└── fusion_features/
+
+models/
+├── oracle_fusion_logistic_regression.joblib
+├── semantic_projection_model.pth
+└── semantic_projection_scaler.joblib
+
+results/
+├── reports/
+│   ├── oracle_fusion_test_report.txt
+│   ├── semantic_projection_test_report.txt
+│   ├── week4_ablation_report.txt
+│   └── week4_classwise_comparison.txt
+│
+└── plots/
+    ├── oracle_fusion_test_confusion_matrix.png
+    └── semantic_projection_test_confusion_matrix.png
+```
+
+---
+
+# Key Learnings
+
+- Simple concatenation of visual and text features can introduce severe label leakage.
+- Oracle experiments are useful for understanding upper-bound performance but cannot be deployed.
+- Leakage-safe semantic projection provides a valid multimodal inference strategy.
+- Proper experimental design is more important than achieving artificially high accuracy.
+- Vision-language integration forms the foundation for more advanced multimodal action recognition systems.
+
+---
+
+## Week 4 Status
+
+**Status:** ✅ Completed
+
+Major accomplishments:
+
+- Oracle fusion experiments completed.
+- Leakage-safe semantic projection implemented.
+- End-to-end semantic prediction pipeline created.
+- Ablation study completed.
+- Class-wise analysis completed.
+- Raw video and frame-folder inference verified successfully.

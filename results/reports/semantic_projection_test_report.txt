@@ -1,0 +1,29 @@
+LEAKAGE-SAFE SEMANTIC PROJECTION TEST REPORT
+======================================================================
+
+This model receives only visual features during inference.
+Predictions are produced by comparing the projected visual vector with all class text embeddings.
+
+Test feature shape: (197, 512)
+Accuracy: 0.8782
+Macro precision: 0.8709
+Macro recall: 0.8740
+Macro F1-score: 0.8639
+Weighted F1-score: 0.8734
+Misclassifications: 24
+
+               precision    recall  f1-score   support
+
+      Archery     0.9000    0.7200    0.8000        25
+   Basketball     0.8333    0.5000    0.6250        20
+       Biking     0.8696    1.0000    0.9302        20
+      Bowling     1.0000    1.0000    1.0000        23
+     Drumming     1.0000    0.9643    0.9818        28
+ JavelinThrow     0.6364    0.7368    0.6829        19
+PlayingGuitar     1.0000    1.0000    1.0000        25
+ RopeClimbing     0.7727    0.9444    0.8500        18
+       Typing     0.8261    1.0000    0.9048        19
+
+     accuracy                         0.8782       197
+    macro avg     0.8709    0.8740    0.8639       197
+ weighted avg     0.8845    0.8782    0.8734       197

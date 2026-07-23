@@ -1,0 +1,11 @@
+{
+    "experiment": "oracle_true_label_concatenation",
+    "contains_label_leakage": true,
+    "test_samples": 197,
+    "feature_dimension": 896,
+    "accuracy": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0
+}

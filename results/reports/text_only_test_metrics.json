@@ -1,0 +1,12 @@
+{
+    "experiment": "text_only_true_label_oracle",
+    "contains_label_leakage": true,
+    "test_samples": 197,
+    "feature_dimension": 384,
+    "accuracy": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0,
+    "misclassification_count": 0
+}

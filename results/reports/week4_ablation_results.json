@@ -1,0 +1,54 @@
+[
+    {
+        "experiment": "Video-only baseline",
+        "feature_type": "Visual",
+        "feature_dimension": 512,
+        "contains_label_leakage": false,
+        "valid_unseen_video_inference": true,
+        "test_accuracy": 0.934010152284264,
+        "macro_precision": 0.9289390474386212,
+        "macro_recall": 0.9284145549057831,
+        "macro_f1": 0.9277378626499443,
+        "weighted_f1": 0.9341146855571967,
+        "interpretation": "Valid visual-only reference model."
+    },
+    {
+        "experiment": "Text-only oracle",
+        "feature_type": "Text",
+        "feature_dimension": 384,
+        "contains_label_leakage": true,
+        "valid_unseen_video_inference": false,
+        "test_accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_f1": 1.0,
+        "interpretation": "Oracle result because the true class selects the text embedding."
+    },
+    {
+        "experiment": "Oracle concatenation",
+        "feature_type": "Visual + true-label text",
+        "feature_dimension": 896,
+        "contains_label_leakage": true,
+        "valid_unseen_video_inference": false,
+        "test_accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_f1": 1.0,
+        "interpretation": "Upper-bound experiment with target leakage."
+    },
+    {
+        "experiment": "Leakage-safe semantic projection",
+        "feature_type": "Visual projected to text space",
+        "feature_dimension": 384,
+        "contains_label_leakage": false,
+        "valid_unseen_video_inference": true,
+        "test_accuracy": 0.8781725888324873,
+        "macro_precision": 0.8708973795930318,
+        "macro_recall": 0.8739524737770351,
+        "macro_f1": 0.8638599415542126,
+        "weighted_f1": 0.8734093715749928,
+        "interpretation": "Valid semantic prediction from visual features only."
+    }
+]

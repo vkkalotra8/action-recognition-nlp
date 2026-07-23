@@ -1,0 +1,110 @@
+[
+    {
+        "class_name": "Archery",
+        "video_precision": 0.9565,
+        "video_recall": 0.88,
+        "video_f1": 0.9167,
+        "projection_precision": 0.9,
+        "projection_recall": 0.72,
+        "projection_f1": 0.8,
+        "f1_difference": -0.11669999999999991,
+        "outcome": "Worse",
+        "support": 25
+    },
+    {
+        "class_name": "Basketball",
+        "video_precision": 0.7391,
+        "video_recall": 0.85,
+        "video_f1": 0.7907,
+        "projection_precision": 0.8333,
+        "projection_recall": 0.5,
+        "projection_f1": 0.625,
+        "f1_difference": -0.16569999999999996,
+        "outcome": "Worse",
+        "support": 20
+    },
+    {
+        "class_name": "Biking",
+        "video_precision": 0.9524,
+        "video_recall": 1.0,
+        "video_f1": 0.9756,
+        "projection_precision": 0.8696,
+        "projection_recall": 1.0,
+        "projection_f1": 0.9302,
+        "f1_difference": -0.045399999999999996,
+        "outcome": "Worse",
+        "support": 20
+    },
+    {
+        "class_name": "Bowling",
+        "video_precision": 1.0,
+        "video_recall": 1.0,
+        "video_f1": 1.0,
+        "projection_precision": 1.0,
+        "projection_recall": 1.0,
+        "projection_f1": 1.0,
+        "f1_difference": 0.0,
+        "outcome": "Unchanged",
+        "support": 23
+    },
+    {
+        "class_name": "Drumming",
+        "video_precision": 1.0,
+        "video_recall": 1.0,
+        "video_f1": 1.0,
+        "projection_precision": 1.0,
+        "projection_recall": 0.9643,
+        "projection_f1": 0.9818,
+        "f1_difference": -0.018199999999999994,
+        "outcome": "Worse",
+        "support": 28
+    },
+    {
+        "class_name": "JavelinThrow",
+        "video_precision": 0.8235,
+        "video_recall": 0.7368,
+        "video_f1": 0.7778,
+        "projection_precision": 0.6364,
+        "projection_recall": 0.7368,
+        "projection_f1": 0.6829,
+        "f1_difference": -0.0949000000000001,
+        "outcome": "Worse",
+        "support": 19
+    },
+    {
+        "class_name": "PlayingGuitar",
+        "video_precision": 1.0,
+        "video_recall": 1.0,
+        "video_f1": 1.0,
+        "projection_precision": 1.0,
+        "projection_recall": 1.0,
+        "projection_f1": 1.0,
+        "f1_difference": 0.0,
+        "outcome": "Unchanged",
+        "support": 25
+    },
+    {
+        "class_name": "RopeClimbing",
+        "video_precision": 0.8889,
+        "video_recall": 0.8889,
+        "video_f1": 0.8889,
+        "projection_precision": 0.7727,
+        "projection_recall": 0.9444,
+        "projection_f1": 0.85,
+        "f1_difference": -0.038900000000000046,
+        "outcome": "Worse",
+        "support": 18
+    },
+    {
+        "class_name": "Typing",
+        "video_precision": 1.0,
+        "video_recall": 1.0,
+        "video_f1": 1.0,
+        "projection_precision": 0.8261,
+        "projection_recall": 1.0,
+        "projection_f1": 0.9048,
+        "f1_difference": -0.09519999999999995,
+        "outcome": "Worse",
+        "support": 19
+    }
+]
