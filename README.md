@@ -1292,3 +1292,1919 @@ Major accomplishments:
 - Ablation study completed.
 - Class-wise analysis completed.
 - Raw video and frame-folder inference verified successfully.
+
+
+---
+
+
+# Week 5: Explainable AI for Semantic Action Recognition
+
+## Objective
+
+The previous weeks focused on building an accurate semantic action recognition system.
+
+- **Week 1** prepared the dataset and extracted video frames.
+- **Week 2** built a visual-only action recognition baseline.
+- **Week 3** introduced semantic action representations using Sentence-BERT.
+- **Week 4** combined visual and semantic information through a leakage-safe projection model.
+
+Although the system could now recognize human actions with high accuracy, it still behaved like a **black box**.
+
+For example, if the model predicted:
+
+```text
+Drumming
+```
+
+there was no information explaining:
+
+- Why was Drumming selected?
+- Which other actions looked similar?
+- How confident was the prediction?
+- Was the decision obvious or ambiguous?
+- Which frames were actually used?
+
+Week 5 addresses this limitation by transforming the prediction pipeline into an **Explainable AI (XAI)** system.
+
+Instead of producing only an action label, the system now generates an interpretable prediction report that includes:
+
+- predicted action
+- semantic similarity score
+- confidence level
+- score separation
+- representative natural-language description
+- explanation of the prediction
+- reliability note
+- Top-K alternative predictions
+- sampled inference frames
+- contact sheet visualization
+- machine-readable JSON report
+
+The goal of Week 5 is not to improve classification accuracy.
+
+Instead, the objective is to improve the **interpretability, transparency, and usability** of the semantic action recognition system.
+
+---
+
+# Why Explainability Matters
+
+Traditional machine learning systems usually produce outputs similar to this:
+
+```text
+Prediction:
+Drumming
+```
+
+Although this prediction may be correct, it does not answer an important question:
+
+> **Why did the model reach this decision?**
+
+This lack of transparency creates several problems.
+
+For example:
+
+- incorrect predictions become difficult to analyze
+- users cannot estimate prediction reliability
+- similar action classes remain unexplained
+- debugging the model becomes harder
+- demonstrating the project becomes less convincing
+
+Consider two different outputs.
+
+Without explainability:
+
+```text
+Prediction:
+PlayingGuitar
+```
+
+With explainability:
+
+```text
+Prediction:
+PlayingGuitar
+
+Similarity:
+0.84
+
+Confidence:
+High
+
+Second Best:
+Drumming (0.42)
+
+Explanation:
+
+The semantic representation extracted from the video is much closer to
+PlayingGuitar than every other action class.
+
+The score difference between the first and second prediction indicates
+that the decision is reliable.
+```
+
+The second output immediately provides useful information.
+
+A human observer can understand:
+
+- what the model predicted
+- how confident it is
+- which alternative actions were considered
+- whether the prediction should be trusted
+
+This is the primary objective of Explainable AI.
+
+---
+
+# Explainable AI (XAI)
+
+Explainable AI refers to machine learning systems that provide understandable reasons behind their predictions.
+
+Instead of behaving like a black box,
+
+```text
+Input
+↓
+
+Model
+
+↓
+
+Prediction
+```
+
+an explainable model exposes part of its reasoning process.
+
+```text
+Input
+↓
+
+Model
+
+↓
+
+Prediction
+
+↓
+
+Explanation
+
+↓
+
+Confidence
+
+↓
+
+Alternative Predictions
+```
+
+Modern AI applications increasingly require explainability.
+
+Examples include:
+
+- healthcare diagnosis
+- autonomous driving
+- finance
+- security systems
+- surveillance
+- recommendation systems
+
+Human action recognition is no exception.
+
+If a surveillance system predicts:
+
+```text
+Running
+```
+
+the user naturally wants to know:
+
+- Was the prediction reliable?
+- Which other actions looked similar?
+- Was the model uncertain?
+
+Providing this information greatly increases user trust.
+
+---
+
+# Explainability in This Project
+
+This project uses a semantic prediction model rather than a traditional classifier.
+
+The model does **not** output probabilities directly.
+
+Instead, it predicts a semantic embedding.
+
+That semantic embedding is compared against every action class embedding using cosine similarity.
+
+```text
+Video
+
+↓
+
+Visual Features
+
+↓
+
+Semantic Projection Model
+
+↓
+
+Predicted Semantic Embedding
+
+↓
+
+Cosine Similarity
+
+↓
+
+All Class Embeddings
+
+↓
+
+Best Matching Action
+```
+
+Because similarity scores are available for every class, they naturally provide an explanation of the decision.
+
+Rather than hiding intermediate information, Week 5 exposes it to the user.
+
+---
+
+# Week 5 Workflow
+
+```text
+                    INPUT VIDEO
+                         │
+                         ▼
+                 Sample Video Frames
+                         │
+                         ▼
+               ResNet18 Feature Extractor
+                         │
+                         ▼
+                Mean Video Representation
+                         │
+                         ▼
+          Semantic Projection Model (Week 4)
+                         │
+                         ▼
+          Predicted Semantic Embedding (384)
+                         │
+                         ▼
+      Cosine Similarity Against Every Action Class
+                         │
+         ┌───────────────┼────────────────┐
+         │               │                │
+         ▼               ▼                ▼
+  Top-K Predictions   Confidence     Score Gap
+         │               │                │
+         └───────────────┼────────────────┘
+                         │
+                         ▼
+              Explanation Generation Engine
+                         │
+         ┌───────────────┼────────────────┐
+         │               │                │
+         ▼               ▼                ▼
+ Representative     Reliability      Natural Language
+ Description            Note          Explanation
+         │
+         ▼
+     Prediction Report
+         │
+         ▼
+ JSON Report + Text Report + Contact Sheet
+```
+
+---
+
+# Overall Week 5 Architecture
+
+The explainability module is built on top of the semantic projection model developed during Week 4.
+
+Unlike previous weeks, no new classifier is trained.
+
+Instead, Week 5 enhances the **inference stage**.
+
+```text
+                   TRAINING
+──────────────────────────────────────────────
+
+Visual Features
+        │
+        ▼
+Semantic Projection Model
+        │
+        ▼
+Semantic Embedding
+
+──────────────────────────────────────────────
+
+                  INFERENCE
+
+Input Video
+      │
+      ▼
+Frame Sampling
+      │
+      ▼
+Visual Feature Extraction
+      │
+      ▼
+Semantic Projection Model
+      │
+      ▼
+Similarity Scores
+      │
+      ▼
+Explainability Engine
+      │
+      ▼
+Prediction Report
+```
+
+This design has an important advantage.
+
+The explainability module is completely independent from the training process.
+
+If the semantic projection model is replaced in the future with a larger architecture (such as Video Swin Transformer or CLIP), the explanation engine can still be reused with minimal modifications.
+
+---
+
+# Components Added During Week 5
+
+The following major components were implemented during this week.
+
+| Component | Purpose |
+|-----------|---------|
+| Explanation Engine | Generates human-readable explanations from similarity scores |
+| Explainable Prediction Script | Performs inference while generating explanations |
+| Confidence Estimator | Converts similarity values into confidence levels |
+| Score Separation Analyzer | Measures how distinct the best prediction is |
+| Top-K Ranking Module | Displays the most similar action classes |
+| Prediction Report Generator | Creates text and JSON reports |
+| Frame Saving Utility | Stores the exact frames used during inference |
+| Contact Sheet Generator | Creates a single image containing all sampled frames |
+| Visual Evidence Metadata | Records saved frame locations inside the JSON report |
+
+Together, these components transform the semantic action recognition model into an interpretable prediction system suitable for demonstrations, debugging, and future deployment.
+
+---
+
+# Learning Outcomes
+
+After completing Week 5, the project is capable of answering questions such as:
+
+- What action was predicted?
+- Why was this action selected?
+- Which other actions were considered?
+- How similar were those actions?
+- Is the prediction reliable?
+- Was the decision ambiguous?
+- Which frames influenced the prediction?
+- Can another program read the prediction report?
+
+These capabilities significantly improve the interpretability of the project while keeping the underlying semantic recognition model unchanged.
+
+Week 5 therefore focuses on **understanding model decisions**, rather than improving classification accuracy.
+
+
+# Explanation Engine
+
+The central component introduced during Week 5 is the **Explanation Engine**.
+
+The semantic projection model developed during Week 4 is capable of predicting a semantic embedding for an input video.
+
+However, the projection model itself only produces numerical values.
+
+These numerical values are meaningful for machine learning algorithms but are not easy for humans to interpret.
+
+The role of the Explanation Engine is to convert these numerical outputs into understandable natural-language explanations.
+
+Instead of returning only:
+
+```text
+Prediction:
+Drumming
+```
+
+the system now produces information such as:
+
+```text
+Prediction:
+Drumming
+
+Similarity:
+0.8776
+
+Confidence:
+High
+
+Top Alternative:
+Biking
+
+Explanation:
+
+The projected semantic representation of the video was most
+similar to the Drumming class embedding. Its similarity score
+was clearly higher than the next-best class, indicating a
+confident prediction.
+
+Reliability Note:
+
+These values are cosine similarity scores rather than calibrated
+probabilities.
+```
+
+This additional information allows users to understand not only
+**what** the model predicted but also **why** it reached that decision.
+
+---
+
+# Why an Explanation Engine is Needed
+
+Machine learning models generally produce numerical outputs.
+
+For example, a classifier may internally calculate:
+
+```text
+Drumming        0.8776
+Biking          0.3373
+PlayingGuitar   0.3058
+RopeClimbing    0.2127
+Basketball      0.1657
+```
+
+While these numbers are useful to a computer, they do not immediately answer questions such as:
+
+- Why is Drumming the prediction?
+- Is the model confident?
+- Is another class almost equally likely?
+- Should this prediction be trusted?
+
+The Explanation Engine interprets these values and converts them into meaningful sentences.
+
+Its objective is to bridge the gap between numerical model outputs and human understanding.
+
+---
+
+# Position of the Explanation Engine
+
+The explanation module is placed **after semantic prediction**.
+
+```text
+Input Video
+      │
+      ▼
+Visual Features
+      │
+      ▼
+Semantic Projection Model
+      │
+      ▼
+Predicted Semantic Embedding
+      │
+      ▼
+Cosine Similarity Scores
+      │
+      ▼
+Explanation Engine
+      │
+      ▼
+Prediction Report
+```
+
+Notice that the Explanation Engine does **not** affect the prediction itself.
+
+Instead, it interprets the prediction after inference has already completed.
+
+This separation keeps the prediction pipeline simple while making the output much easier to understand.
+
+---
+
+# Cosine Similarity
+
+The semantic projection model predicts a **384-dimensional semantic embedding**.
+
+Each action class already has its own semantic embedding generated during Week 3 using Sentence-BERT.
+
+For every prediction, the model compares the projected video embedding with every class embedding using cosine similarity.
+
+```text
+Projected Video Embedding
+
+        │
+
+        ├────────► Archery
+        │
+        ├────────► Basketball
+        │
+        ├────────► Biking
+        │
+        ├────────► Bowling
+        │
+        ├────────► Drumming
+        │
+        ├────────► JavelinThrow
+        │
+        ├────────► PlayingGuitar
+        │
+        ├────────► RopeClimbing
+        │
+        └────────► Typing
+```
+
+Each comparison produces one similarity score.
+
+Example:
+
+```text
+Archery          0.104
+Basketball       0.166
+Biking           0.337
+Bowling          0.081
+Drumming         0.878
+PlayingGuitar    0.306
+Typing           0.049
+```
+
+The class with the highest similarity becomes the prediction.
+
+---
+
+# Why Cosine Similarity?
+
+Cosine similarity measures the angle between two vectors.
+
+Unlike Euclidean distance, cosine similarity focuses on the direction of the vectors rather than their magnitude.
+
+```text
+          Vector A
+
+             /
+
+            /
+
+           /
+
+----------/----------------
+
+         /
+
+        /
+
+Vector B
+```
+
+If two vectors point in almost the same direction,
+
+their cosine similarity approaches:
+
+```text
+1.0
+```
+
+If they point in unrelated directions,
+
+their similarity approaches:
+
+```text
+0.0
+```
+
+If they point in opposite directions,
+
+their similarity becomes:
+
+```text
+-1.0
+```
+
+Because both the projected embeddings and class embeddings are L2-normalized,
+
+their cosine similarity directly represents semantic closeness.
+
+---
+
+# Why Similarity is NOT a Probability
+
+One of the most common misconceptions is treating cosine similarity as a probability.
+
+For example:
+
+```text
+Similarity
+
+0.91
+```
+
+does **not** mean
+
+```text
+91% confidence
+```
+
+These values represent geometric similarity in embedding space.
+
+They are **not calibrated probabilities**.
+
+Consider this example:
+
+```text
+Drumming          0.88
+Biking            0.34
+PlayingGuitar     0.31
+```
+
+The model is saying:
+
+> "The semantic embedding of this video is closest to the
+> Drumming embedding."
+
+It is **not** saying:
+
+> "There is an 88% chance that this video contains drumming."
+
+This distinction is extremely important.
+
+For that reason, every prediction report includes a reliability note reminding the user that cosine similarity values should not be interpreted as probabilities.
+
+---
+
+# Confidence Estimation
+
+Although cosine similarity is not a probability,
+
+it still provides useful information.
+
+Larger similarity values generally indicate that the projected semantic embedding is closer to one particular class.
+
+Week 5 therefore converts similarity values into simple confidence levels.
+
+Example:
+
+```text
+Similarity
+
+0.90
+
+↓
+
+Confidence
+
+High
+```
+
+Another example:
+
+```text
+Similarity
+
+0.54
+
+↓
+
+Confidence
+
+Moderate
+```
+
+And:
+
+```text
+Similarity
+
+0.18
+
+↓
+
+Confidence
+
+Low
+```
+
+These confidence labels make the prediction easier for non-technical users to interpret.
+
+---
+
+# Why Confidence Levels are Useful
+
+Most users are unfamiliar with cosine similarity.
+
+Compare these two outputs.
+
+Without interpretation:
+
+```text
+Similarity
+
+0.81
+```
+
+With interpretation:
+
+```text
+Similarity
+
+0.81
+
+Confidence
+
+High
+```
+
+The second output communicates the prediction quality much more clearly.
+
+Confidence levels therefore improve the readability of prediction reports without changing the underlying model.
+
+---
+
+# Score Separation
+
+Similarity alone is not always sufficient.
+
+Consider two predictions.
+
+Example 1:
+
+```text
+Drumming
+
+0.88
+```
+
+Second place:
+
+```text
+Biking
+
+0.34
+```
+
+The difference is:
+
+```text
+0.54
+```
+
+This is a strong separation.
+
+Now consider another prediction.
+
+```text
+PlayingGuitar
+
+0.61
+```
+
+Second place:
+
+```text
+Drumming
+
+0.60
+```
+
+Difference:
+
+```text
+0.01
+```
+
+Although PlayingGuitar still has the highest similarity,
+
+the model is clearly uncertain because another class is almost identical.
+
+Week 5 therefore calculates the gap between the highest similarity score and the second-highest similarity score.
+
+This value is called the **score separation**.
+
+---
+
+# Separation Levels
+
+The score gap is translated into qualitative descriptions.
+
+Examples include:
+
+```text
+Large gap
+
+↓
+
+Clear separation
+```
+
+```text
+Medium gap
+
+↓
+
+Moderate separation
+```
+
+```text
+Small gap
+
+↓
+
+Ambiguous prediction
+```
+
+These descriptions help users understand whether the model made an obvious decision or whether multiple actions looked equally similar.
+
+---
+
+# Reliability Notes
+
+Every prediction report also includes a reliability note.
+
+Example:
+
+```text
+These values are cosine similarity scores,
+not calibrated probabilities.
+
+The top result has a reasonably distinct
+semantic advantage over the next candidate.
+```
+
+The purpose of this section is to prevent incorrect interpretation of the similarity values.
+
+Instead of simply presenting numbers,
+
+the report explains what those numbers actually mean.
+
+---
+
+# Natural-Language Explanation Generation
+
+The Explanation Engine automatically generates complete English sentences.
+
+Instead of displaying only numerical statistics,
+
+it produces explanations such as:
+
+```text
+The projected semantic representation of the
+video was most similar to the Drumming class
+embedding.
+
+Its similarity score of 0.8776 was clearly
+higher than the next-best class, Biking,
+which scored 0.3373.
+```
+
+These explanations are dynamically generated using the prediction results.
+
+Different sentence templates are selected depending on the confidence level and score separation.
+
+As a result, each prediction receives a customized explanation rather than a fixed text block.
+
+---
+
+# Decision Flow of the Explanation Engine
+
+The explanation generation process follows the workflow below.
+
+```text
+Similarity Scores
+        │
+        ▼
+Rank Classes
+        │
+        ▼
+Calculate Top Score
+        │
+        ▼
+Calculate Score Gap
+        │
+        ▼
+Determine Confidence
+        │
+        ▼
+Determine Separation Level
+        │
+        ▼
+Generate Natural-Language Explanation
+        │
+        ▼
+Generate Reliability Note
+        │
+        ▼
+Create Prediction Report
+```
+
+This workflow transforms raw numerical outputs into a structured explanation that is easy for both technical and non-technical users to understand.
+
+---
+
+# Summary
+
+The Explanation Engine is the core component introduced during Week 5.
+
+Rather than modifying the semantic prediction model itself, it enhances the inference process by translating similarity scores into meaningful human-readable explanations.
+
+By combining similarity interpretation, confidence estimation, score separation analysis, and automatically generated explanations, the project evolves from a traditional prediction system into an explainable AI application.
+
+This makes the semantic action recognition model easier to debug, easier to demonstrate, and significantly more transparent for end users.
+
+
+# Explainable Prediction Pipeline
+
+After building the Explanation Engine, the next step is to integrate it into the complete inference pipeline.
+
+Instead of producing only a predicted action class, the prediction script now generates a complete explainable prediction report.
+
+The inference process begins with either a raw video file or a folder containing extracted image frames.
+
+The video is first converted into a fixed number of representative frames.
+
+These sampled frames are processed by the ResNet18 feature extractor to generate visual features.
+
+The visual features are then projected into the semantic embedding space using the leakage-safe semantic projection model developed during Week 4.
+
+Finally, cosine similarity is calculated between the projected video embedding and every action class embedding.
+
+The Explanation Engine interprets these similarity scores and generates a complete prediction report.
+
+---
+
+# Explainable Prediction Workflow
+
+```text
+Input Video / Frame Folder
+            │
+            ▼
+     Frame Sampling
+            │
+            ▼
+ ResNet18 Feature Extractor
+            │
+            ▼
+ Mean Video Feature
+            │
+            ▼
+ Semantic Projection Model
+            │
+            ▼
+ Projected Semantic Embedding
+            │
+            ▼
+ Cosine Similarity
+            │
+            ▼
+ Rank All Classes
+            │
+            ▼
+ Explanation Engine
+            │
+            ▼
+ Prediction Report
+            │
+            ├────────► Console Output
+            ├────────► Text Report
+            ├────────► JSON Report
+            ├────────► Saved Frames
+            └────────► Contact Sheet
+```
+
+---
+
+# Explainable Prediction Outputs
+
+Every prediction now produces significantly more information than previous weeks.
+
+The output includes:
+
+- Predicted action class
+- Top-K ranked predictions
+- Cosine similarity scores
+- Confidence level
+- Score separation
+- Representative action description
+- Natural-language explanation
+- Reliability note
+- Sampled inference frames
+- Contact sheet visualization
+- Machine-readable JSON report
+
+Together, these outputs make the prediction process much easier to understand and analyze.
+
+---
+
+# Prediction Reports
+
+Week 5 automatically generates two prediction reports.
+
+## Text Report
+
+The text report is designed for human reading.
+
+It summarizes the prediction in a clean and organized format.
+
+Example:
+
+```text
+Predicted Action
+
+Drumming
+
+Similarity
+
+0.8776
+
+Confidence
+
+High
+
+Explanation
+
+The projected semantic representation of the video
+was most similar to the Drumming class embedding.
+
+Reliability
+
+These values are cosine similarity scores rather
+than calibrated probabilities.
+```
+
+---
+
+## JSON Report
+
+The JSON report stores the same information in a structured format.
+
+Unlike the text report, it is intended for software applications.
+
+The JSON report contains information such as:
+
+```text
+Predicted class
+
+Top predictions
+
+Similarity scores
+
+Confidence level
+
+Score gap
+
+Representative description
+
+Explanation
+
+Reliability note
+
+Visual evidence
+```
+
+This makes it possible for future applications such as the Streamlit interface to display prediction results without parsing text files.
+
+---
+
+# Top-K Predictions
+
+Instead of displaying only the best prediction, the system also displays the Top-K most similar action classes.
+
+Example:
+
+```text
+1. Drumming         0.8776
+2. Biking           0.3373
+3. PlayingGuitar    0.3058
+4. RopeClimbing     0.2127
+5. Basketball       0.1657
+```
+
+Displaying alternative predictions helps users understand which actions appeared visually or semantically similar.
+
+---
+
+# Representative Action Description
+
+Each action class already contains multiple natural-language descriptions created during Week 3.
+
+Week 5 includes one representative description inside the prediction report.
+
+Example:
+
+```text
+Predicted Action
+
+Drumming
+
+Representative Description
+
+A person is playing a drum using drumsticks.
+```
+
+This connects the semantic prediction with a human-readable explanation.
+
+---
+
+# Visual Evidence
+
+Understanding why a prediction was made is easier when users can inspect the actual frames used during inference.
+
+For this reason, Week 5 can optionally save all sampled frames.
+
+Example:
+
+```text
+results/
+└── predictions/
+    └── difficult_drumming_test_frames/
+        ├── frame_0001.jpg
+        ├── frame_0002.jpg
+        ├── ...
+        └── frame_0016.jpg
+```
+
+These saved images represent the visual evidence used by the model.
+
+---
+
+# Contact Sheet Generation
+
+Inspecting many individual frame images can be inconvenient.
+
+Week 5 therefore generates a contact sheet.
+
+A contact sheet combines all sampled frames into a single image.
+
+Example:
+
+```text
++---------+---------+---------+---------+
+| Frame 1 | Frame 2 | Frame 3 | Frame 4 |
++---------+---------+---------+---------+
+| Frame 5 | Frame 6 | Frame 7 | Frame 8 |
++---------+---------+---------+---------+
+| Frame 9 | Frame10 | Frame11 | Frame12 |
++---------+---------+---------+---------+
+| Frame13 | Frame14 | Frame15 | Frame16 |
++---------+---------+---------+---------+
+```
+
+This visualization provides a quick overview of the entire inference process.
+
+---
+
+# Files Generated During Week 5
+
+Typical prediction outputs include:
+
+```text
+results/
+└── predictions/
+    ├── difficult_drumming_prediction.txt
+    ├── difficult_drumming_prediction.json
+    ├── difficult_drumming_contact_sheet.jpg
+    └── difficult_drumming_frames/
+        ├── frame_0001.jpg
+        ├── frame_0002.jpg
+        ├── ...
+        └── frame_0016.jpg
+```
+
+These files provide both human-readable and machine-readable prediction results.
+
+---
+
+# Grad-CAM
+
+The original roadmap suggested Grad-CAM as an optional explainability technique.
+
+Grad-CAM highlights image regions that contribute most to a CNN prediction.
+
+However, the final semantic projection model performs prediction in a semantic embedding space rather than directly through a CNN classifier.
+
+Since the objective of this project is semantic explainability rather than spatial attention visualization, Grad-CAM was not included in the final implementation.
+
+Instead, explainability is provided through semantic similarity analysis, confidence estimation, Top-K predictions, representative descriptions, and visual evidence.
+
+---
+
+# Folder Structure After Week 5
+
+```text
+results/
+│
+├── predictions/
+│   ├── *.txt
+│   ├── *.json
+│   ├── *_contact_sheet.jpg
+│   └── *_frames/
+│
+├── reports/
+│
+└── plots/
+```
+
+This organization separates prediction outputs from evaluation reports and visualization results.
+
+---
+
+# Week 5 Summary
+
+Week 5 transforms the semantic action recognition model into an explainable AI system.
+
+Instead of returning only an action label, the system now explains its prediction using semantic similarity information, confidence estimation, score separation, representative descriptions, Top-K predictions, and visual evidence.
+
+The explainability module operates entirely during inference and does not modify the underlying semantic projection model.
+
+As a result, the prediction process becomes significantly more transparent, easier to interpret, and more suitable for demonstrations and future deployment.
+
+---
+
+# Learning Outcomes
+
+After completing Week 5, the project is capable of:
+
+- Predicting actions from videos or frame folders.
+- Generating natural-language explanations for predictions.
+- Displaying Top-K alternative action classes.
+- Estimating confidence using semantic similarity.
+- Measuring prediction ambiguity using score separation.
+- Saving structured JSON and text reports.
+- Preserving sampled inference frames as visual evidence.
+- Generating contact sheets for qualitative analysis.
+- Producing an explainable prediction pipeline suitable for integration into a user interface.
+
+With the completion of Week 5, the project has evolved from a semantic action recognition model into a fully explainable vision-language recognition system.
+
+The remaining work in Week 6 focuses on deployment through a Streamlit application, final documentation, presentation preparation, and GitHub packaging.
+```
+
+
+# Week 6: Streamlit Deployment, Documentation and Final Project
+
+## Objective
+
+The final week focuses on transforming the complete machine learning pipeline into a polished, user-friendly application. Instead of executing multiple Python scripts manually, the entire workflow is integrated into a single interactive interface using **Streamlit**.
+
+By the end of this week, the project becomes a complete demonstration of an end-to-end Vision-Language Action Recognition system capable of:
+
+- Accepting a new video or extracted frame folder as input.
+- Running the complete semantic action recognition pipeline.
+- Displaying the predicted action.
+- Showing semantic similarity scores.
+- Generating a natural-language explanation.
+- Presenting confidence and reliability information.
+- Saving prediction reports.
+- Organizing the project for GitHub publication.
+
+This week transforms the project from a collection of scripts into a deployable application that can easily be demonstrated, shared, or extended in future research.
+
+---
+
+# Week 6 Workflow
+
+```text
+                    USER
+
+                      │
+                      ▼
+
+              Upload Video / Frames
+
+                      │
+                      ▼
+
+           Streamlit User Interface
+
+                      │
+                      ▼
+
+        Frame Extraction (if required)
+
+                      │
+                      ▼
+
+       ResNet18 Feature Extraction (512-D)
+
+                      │
+                      ▼
+
+      Semantic Projection Model (512 → 384)
+
+                      │
+                      ▼
+
+      Cosine Similarity with Class Embeddings
+
+                      │
+                      ▼
+
+        Rank All Candidate Action Classes
+
+                      │
+                      ▼
+
+         Explainability Engine (Week 5)
+
+                      │
+        ┌─────────────┼──────────────┐
+        │             │              │
+        ▼             ▼              ▼
+
+ Predicted Class   Top-k Results   Confidence
+
+        │             │              │
+        └─────────────┼──────────────┘
+                      │
+                      ▼
+
+      Natural Language Explanation
+
+                      │
+                      ▼
+
+      Save Reports + Display Results
+```
+
+---
+
+# Why Streamlit?
+
+During previous weeks every task required executing individual Python scripts from the command line.
+
+For example:
+
+```text
+python train_projection_model.py
+
+python predict_video_semantic.py
+
+python predict_video_explainable.py
+```
+
+Although this workflow is ideal during development, it is not convenient for demonstrations or non-technical users.
+
+Streamlit provides a lightweight web application framework that allows the entire inference pipeline to be executed through a browser.
+
+Instead of typing commands, the user only needs to:
+
+1. Open the application.
+2. Upload a video.
+3. Click Predict.
+4. View the results.
+
+No knowledge of Python is required.
+
+---
+
+# Complete Project Architecture
+
+```text
+                    INPUT VIDEO
+                          │
+                          ▼
+                Frame Sampling Module
+                          │
+                          ▼
+            ResNet18 Feature Extraction
+                          │
+                  512-D Visual Feature
+                          │
+                          ▼
+          Semantic Projection Network
+                 (Week 4 Model)
+                          │
+                 384-D Semantic Vector
+                          │
+                          ▼
+             Sentence-BERT Class Space
+                          │
+                          ▼
+             Cosine Similarity Matching
+                          │
+                          ▼
+              Explainability Module
+                    (Week 5)
+                          │
+        ┌─────────────────┼─────────────────┐
+        ▼                 ▼                 ▼
+ Predicted Action   Top-k Predictions   Confidence
+                          │
+                          ▼
+              Streamlit User Interface
+                          │
+                          ▼
+          Reports + Visual Output + JSON
+```
+
+---
+
+# Streamlit Application
+
+The Streamlit application acts as the front-end of the entire project.
+
+It does **not** retrain any models.
+
+Instead, it loads the trained models produced during previous weeks:
+
+- ResNet18 feature extractor
+- Semantic Projection model
+- StandardScaler
+- Sentence-BERT class embeddings
+- Action descriptions
+- Explainability engine
+
+The application simply performs inference on unseen videos.
+
+---
+
+# User Workflow
+
+The complete interaction follows a simple sequence.
+
+```text
+Launch Application
+
+        │
+
+        ▼
+
+Upload Video
+
+        │
+
+        ▼
+
+Extract Frames
+
+        │
+
+        ▼
+
+Generate Visual Features
+
+        │
+
+        ▼
+
+Project into Semantic Space
+
+        │
+
+        ▼
+
+Compare with Text Embeddings
+
+        │
+
+        ▼
+
+Generate Prediction
+
+        │
+
+        ▼
+
+Generate Explanation
+
+        │
+
+        ▼
+
+Display Results
+```
+
+Every prediction follows exactly the same inference pipeline developed throughout Weeks 2–5.
+
+---
+
+# Streamlit Interface
+
+The application provides a clean and intuitive interface.
+
+Typical layout:
+
+```text
+-------------------------------------------------------
+
+ Semantic Prompt-Guided Human Action Recognition
+
+-------------------------------------------------------
+
+Upload Video
+
+[ Choose File ]
+
+--------------------------------------------
+
+Video Preview
+
+--------------------------------------------
+
+Prediction
+
+PlayingGuitar
+
+Semantic Similarity
+
+0.5142
+
+Confidence
+
+Moderate
+
+Representative Description
+
+"A person holds a guitar and strums the strings."
+
+Top Predictions
+
+1. PlayingGuitar
+2. Drumming
+3. RopeClimbing
+
+Explanation
+
+The projected semantic representation was most similar
+to the PlayingGuitar class embedding.
+
+Reliability Note
+
+These values are cosine similarities and not calibrated
+probabilities.
+
+-------------------------------------------------------
+```
+
+The interface is intentionally minimal so that the focus remains on model predictions and explainability.
+
+---
+
+# Inference Pipeline
+
+The deployed application performs exactly the same operations as the command-line inference scripts.
+
+```text
+Video
+
+↓
+
+Frame Sampling
+
+↓
+
+Image Preprocessing
+
+↓
+
+ResNet18 Feature Extraction
+
+↓
+
+Mean Pooling
+
+↓
+
+512-D Video Feature
+
+↓
+
+StandardScaler
+
+↓
+
+Projection Network
+
+↓
+
+384-D Semantic Embedding
+
+↓
+
+Cosine Similarity
+
+↓
+
+Rank Predictions
+
+↓
+
+Explanation Generation
+
+↓
+
+Display Results
+```
+
+This ensures that the Streamlit application produces the same predictions as the standalone inference scripts developed in Weeks 4 and 5.
+
+---
+
+# Components Reused from Previous Weeks
+
+Week 6 introduces very little new machine learning code.
+
+Instead, it integrates components developed earlier.
+
+| Week | Component |
+|------|-----------|
+| Week 2 | ResNet18 visual feature extraction |
+| Week 3 | Sentence-BERT text embeddings |
+| Week 4 | Semantic Projection Model |
+| Week 4 | Cosine Similarity Classification |
+| Week 5 | Explainability Engine |
+| Week 5 | Prediction Reports |
+| Week 5 | Confidence Interpretation |
+| Week 5 | Reliability Notes |
+
+This demonstrates an important principle of software engineering:
+
+> A well-designed machine learning system should be modular, allowing previously developed components to be reused without modification.
+
+---
+
+# Advantages of the Deployment
+
+The Streamlit application offers several practical benefits.
+
+- Interactive user interface.
+- No command-line knowledge required.
+- Supports inference on unseen videos.
+- Generates explainable predictions.
+- Produces reusable prediction reports.
+- Demonstrates the complete end-to-end pipeline.
+- Makes the project suitable for academic presentations.
+- Provides a foundation for future deployment on cloud platforms.
+
+The deployment stage transforms the project from a development prototype into a complete application ready for demonstration.
+
+---
+
+
+# Project Organization
+
+A well-organized project structure is essential for reproducibility and long-term maintenance. Throughout the six-week implementation, the repository was organized into separate directories for datasets, scripts, trained models, reports, visualizations, and deployment resources.
+
+A simplified project structure is shown below.
+
+```text
+action-recognition-nlp/
+│
+├── app/
+│
+├── data/
+│   ├── raw_videos/
+│   ├── frames/
+│   ├── features/
+│   ├── text_embeddings/
+│   └── fusion_features/
+│
+├── metadata/
+│
+├── models/
+│
+├── results/
+│   ├── reports/
+│   ├── plots/
+│   └── predictions/
+│
+├── scripts/
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
+```
+
+Each directory has a clearly defined purpose, making the project easier to understand, maintain, and extend.
+
+---
+
+# Saved Models
+
+By the end of the project, all trained models and supporting files are stored for future inference.
+
+The repository includes:
+
+- ResNet18 feature extractor configuration
+- StandardScaler
+- Logistic Regression baseline
+- Label Encoder
+- Semantic Projection Model
+- Sentence-BERT class embeddings
+- Action descriptions
+- Prediction metadata
+
+Saving these files allows inference without retraining the models, making deployment faster and more efficient.
+
+---
+
+# Reproducibility
+
+One of the primary goals of the project is reproducibility.
+
+A new user should be able to clone the repository, install the required dependencies, and run inference using the pretrained models.
+
+Typical setup:
+
+```bash
+git clone <repository-url>
+
+cd action-recognition-nlp
+
+python -m venv .venv
+
+pip install -r requirements.txt
+```
+
+Once the environment is configured, the Streamlit application can be launched directly.
+
+```bash
+streamlit run app/app.py
+```
+
+This ensures that the project can be reproduced on different systems with minimal effort.
+
+---
+
+# Documentation
+
+Good documentation is as important as writing good code.
+
+Throughout the project, documentation was created for:
+
+- Dataset preparation
+- Feature extraction
+- Baseline model
+- Text embedding generation
+- Vision-language fusion
+- Explainability module
+- Streamlit deployment
+
+The README provides installation instructions, workflow diagrams, project architecture, usage examples, and explanations of every major component.
+
+This makes the repository suitable for both learning and demonstration.
+
+---
+
+# Project Deliverables
+
+At the completion of Week 6, the project includes the following deliverables.
+
+- Complete source code
+- Organized dataset structure
+- Trained machine learning models
+- Sentence-BERT text embeddings
+- Vision-language semantic projection model
+- Explainable prediction pipeline
+- Streamlit web application
+- Prediction reports
+- Evaluation reports
+- Project documentation
+- GitHub-ready repository
+
+Together, these deliverables form a complete end-to-end machine learning application.
+
+---
+
+# Six-Week Project Timeline
+
+```text
+Week 1
+Dataset Preparation
+│
+├── Dataset organization
+├── Frame extraction
+├── Train/Validation/Test split
+└── Action descriptions
+
+        │
+        ▼
+
+Week 2
+Visual Baseline
+│
+├── ResNet18 features
+├── Mean pooling
+├── Logistic Regression
+└── Performance evaluation
+
+        │
+        ▼
+
+Week 3
+Natural Language Processing
+│
+├── Sentence-BERT
+├── Text embeddings
+├── Semantic similarity
+└── Embedding analysis
+
+        │
+        ▼
+
+Week 4
+Vision-Language Fusion
+│
+├── Semantic projection
+├── Cosine similarity
+├── Leakage-safe inference
+└── Ablation study
+
+        │
+        ▼
+
+Week 5
+Explainable AI
+│
+├── Confidence estimation
+├── Top-K predictions
+├── Natural-language explanation
+├── Visual evidence
+└── Prediction reports
+
+        │
+        ▼
+
+Week 6
+Deployment
+│
+├── Streamlit interface
+├── Documentation
+├── GitHub repository
+└── Final presentation
+```
+
+---
+
+# Learning Outcomes
+
+This six-week project demonstrates the complete workflow involved in developing a modern machine learning application.
+
+After completing the project, the following concepts have been implemented and understood:
+
+- Video preprocessing using OpenCV.
+- Feature extraction using pretrained CNN models.
+- Building a baseline machine learning classifier.
+- Generating semantic embeddings using Sentence-BERT.
+- Combining computer vision and NLP through vision-language fusion.
+- Designing a leakage-safe semantic projection model.
+- Measuring similarity using cosine similarity.
+- Building an explainable AI inference pipeline.
+- Creating structured prediction reports.
+- Deploying a machine learning application using Streamlit.
+- Organizing code for reproducibility and open-source publication.
+
+The project integrates concepts from Computer Vision, Natural Language Processing, Machine Learning, Explainable AI, and Software Engineering into a single end-to-end application.
+
+---
+
+# Limitations
+
+Although the project successfully demonstrates semantic action recognition, several limitations remain.
+
+- The dataset contains only a subset of action classes.
+- Temporal information is summarized using mean pooling instead of sequence models.
+- Semantic projection uses a simple linear mapping.
+- Explanations are generated from semantic similarity rather than visual attention maps.
+- Real-time video streaming is not included.
+
+These limitations provide opportunities for future improvements and research.
+
+---
+
+# Future Work
+
+Several extensions can further improve the project.
+
+- Support larger datasets such as UCF101, HMDB51, or Something-Something V2.
+- Replace mean pooling with LSTM, GRU, or Transformer-based temporal modeling.
+- Explore advanced multimodal fusion techniques.
+- Integrate Vision Transformers or Video Swin Transformers.
+- Add Grad-CAM or attention visualization.
+- Support real-time webcam inference.
+- Deploy the application on cloud platforms.
+- Extend the explainability module using Large Language Models.
+
+These enhancements would improve both recognition performance and interpretability.
+
+---
+
+# Project Summary
+
+This project began as a traditional video classification task and gradually evolved into a semantic vision-language recognition system.
+
+Starting from raw videos, visual features were extracted using a pretrained ResNet18 network. Sentence-BERT was then used to encode semantic action descriptions into a shared embedding space. A leakage-safe projection model learned to map visual representations into this semantic space, enabling action recognition through cosine similarity instead of direct class prediction.
+
+To improve interpretability, an explainability module was introduced that reports confidence levels, Top-K predictions, representative action descriptions, and natural-language explanations. Finally, the complete inference pipeline was deployed through a Streamlit application, allowing users to upload new videos and obtain explainable predictions through an interactive interface.
+
+The final outcome is an end-to-end **Semantic Prompt-Guided Human Action Recognition using Vision-Language Fusion** system that combines Computer Vision, Natural Language Processing, Explainable AI, and modern software engineering practices into a single deployable application.
+
+---
+
+# Conclusion
+
+Over six weeks, the project progressed from dataset preparation to a fully deployable explainable action recognition system.
+
+Each stage built upon the previous one, gradually introducing feature extraction, semantic embeddings, multimodal learning, explainability, and deployment.
+
+The completed system demonstrates that semantic language information can effectively complement visual features, resulting in an interpretable vision-language model capable of recognizing human actions while providing meaningful explanations for its predictions.
+
+This project establishes a strong foundation for future work in multimodal learning, explainable artificial intelligence, and research-oriented human action recognition.
